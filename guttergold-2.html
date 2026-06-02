@@ -1,0 +1,1332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>GUTTERGOLD — Born in the Concrete</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Mono:ital,wght@0,400;0,700;1,400&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --black: #0a0a0a;
+      --off-black: #111111;
+      --concrete: #1e1e1e;
+      --ash: #2d2d2d;
+      --smoke: #444444;
+      --fog: #888888;
+      --bone: #d4cfc8;
+      --white: #f0ece6;
+      --red: #c0392b;
+      --blood: #8b1a1a;
+      --rust: #a0522d;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--black);
+      color: var(--white);
+      font-family: 'Space Mono', monospace;
+      overflow-x: hidden;
+      cursor: crosshair;
+    }
+
+    /* NOISE OVERLAY */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 9999;
+      opacity: 0.35;
+    }
+
+    /* SCROLLBAR */
+    ::-webkit-scrollbar { width: 3px; }
+    ::-webkit-scrollbar-track { background: var(--black); }
+    ::-webkit-scrollbar-thumb { background: var(--red); }
+
+    /* NAV */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px 40px;
+      mix-blend-mode: normal;
+      background: linear-gradient(to bottom, rgba(10,10,10,0.95), transparent);
+    }
+
+    .nav-logo {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 26px;
+      letter-spacing: 0.15em;
+      color: var(--white);
+      text-decoration: none;
+    }
+    .nav-logo span {
+      color: var(--red);
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 36px;
+      list-style: none;
+    }
+    .nav-links a {
+      font-family: 'Space Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--fog);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--white); }
+
+    .nav-cart {
+      font-family: 'Space Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--red);
+      text-decoration: none;
+      border: 1px solid var(--blood);
+      padding: 8px 16px;
+      transition: all 0.2s;
+    }
+    .nav-cart:hover {
+      background: var(--blood);
+      color: var(--white);
+    }
+
+    /* HERO */
+    .hero {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-left {
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 120px 40px 80px 40px;
+      position: relative;
+      z-index: 2;
+    }
+
+    .hero-tag {
+      font-size: 9px;
+      letter-spacing: 0.4em;
+      text-transform: uppercase;
+      color: var(--red);
+      margin-bottom: 24px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .hero-tag::before {
+      content: '';
+      display: block;
+      width: 32px;
+      height: 1px;
+      background: var(--red);
+    }
+
+    .hero-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(80px, 10vw, 160px);
+      line-height: 0.9;
+      letter-spacing: -0.02em;
+      color: var(--white);
+      margin-bottom: 8px;
+    }
+
+    .hero-title .line-2 {
+      color: transparent;
+      -webkit-text-stroke: 1px var(--white);
+      opacity: 0.4;
+    }
+
+    .hero-subtitle {
+      font-family: 'DM Serif Display', serif;
+      font-style: italic;
+      font-size: 18px;
+      color: var(--fog);
+      margin-top: 24px;
+      margin-bottom: 48px;
+      max-width: 320px;
+      line-height: 1.5;
+    }
+
+    .hero-ctas {
+      display: flex;
+      gap: 16px;
+      align-items: center;
+    }
+
+    .btn-primary {
+      background: var(--red);
+      color: var(--white);
+      font-family: 'Space Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      padding: 16px 32px;
+      text-decoration: none;
+      display: inline-block;
+      transition: all 0.25s;
+      border: none;
+      cursor: crosshair;
+    }
+    .btn-primary:hover {
+      background: var(--blood);
+      transform: translate(-2px, -2px);
+      box-shadow: 4px 4px 0 var(--ash);
+    }
+
+    .btn-ghost {
+      color: var(--fog);
+      font-family: 'Space Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      padding: 16px 0;
+      text-decoration: none;
+      border-bottom: 1px solid var(--smoke);
+      transition: all 0.2s;
+    }
+    .btn-ghost:hover {
+      color: var(--white);
+      border-color: var(--white);
+    }
+
+    .hero-right {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-image-block {
+      position: absolute;
+      inset: 0;
+      background: var(--concrete);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Abstract figure using CSS */
+    .hero-figure {
+      position: relative;
+      width: 100%;
+      height: 100%;
+    }
+
+    .hero-figure::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, var(--ash) 0%, var(--black) 60%);
+    }
+
+    .hero-figure-shape {
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 280px;
+      height: 85%;
+      background: linear-gradient(170deg, var(--smoke) 0%, #0a0a0a 100%);
+      clip-path: polygon(20% 0%, 80% 0%, 100% 100%, 0% 100%);
+    }
+
+    .hero-figure-accent {
+      position: absolute;
+      top: 15%;
+      right: 15%;
+      width: 80px;
+      height: 80px;
+      border: 1px solid var(--red);
+      transform: rotate(45deg);
+      animation: spin-slow 20s linear infinite;
+    }
+
+    .hero-figure-cross {
+      position: absolute;
+      top: 30%;
+      left: 20%;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 200px;
+      color: transparent;
+      -webkit-text-stroke: 1px rgba(255,255,255,0.04);
+      line-height: 1;
+      pointer-events: none;
+      user-select: none;
+    }
+
+    .hero-number {
+      position: absolute;
+      bottom: 80px;
+      right: 40px;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 120px;
+      color: transparent;
+      -webkit-text-stroke: 1px rgba(192,57,43,0.2);
+      line-height: 1;
+    }
+
+    .hero-scroll {
+      position: absolute;
+      bottom: 40px;
+      left: 40px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      font-size: 9px;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--smoke);
+      writing-mode: vertical-rl;
+    }
+
+    @keyframes spin-slow {
+      from { transform: rotate(45deg); }
+      to { transform: rotate(405deg); }
+    }
+
+    /* MARQUEE */
+    .marquee-wrapper {
+      overflow: hidden;
+      background: var(--red);
+      padding: 14px 0;
+      position: relative;
+    }
+
+    .marquee-track {
+      display: flex;
+      gap: 0;
+      animation: marquee 18s linear infinite;
+      white-space: nowrap;
+    }
+
+    .marquee-item {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 14px;
+      letter-spacing: 0.25em;
+      color: var(--white);
+      padding: 0 40px;
+      display: flex;
+      align-items: center;
+      gap: 40px;
+    }
+
+    .marquee-item::after {
+      content: '✦';
+      font-size: 10px;
+    }
+
+    @keyframes marquee {
+      from { transform: translateX(0); }
+      to { transform: translateX(-50%); }
+    }
+
+    /* DROP SECTION */
+    .drop {
+      padding: 120px 40px;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      margin-bottom: 64px;
+    }
+
+    .section-label {
+      font-size: 9px;
+      letter-spacing: 0.4em;
+      text-transform: uppercase;
+      color: var(--red);
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .section-label::before {
+      content: '';
+      display: block;
+      width: 24px;
+      height: 1px;
+      background: var(--red);
+    }
+
+    .section-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(48px, 5vw, 80px);
+      line-height: 0.95;
+      letter-spacing: -0.01em;
+    }
+
+    .section-link {
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--fog);
+      text-decoration: none;
+      border-bottom: 1px solid var(--smoke);
+      padding-bottom: 4px;
+      transition: all 0.2s;
+    }
+    .section-link:hover { color: var(--white); border-color: var(--red); }
+
+    /* PRODUCT GRID */
+    .product-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2px;
+    }
+
+    .product-card {
+      position: relative;
+      overflow: hidden;
+      cursor: crosshair;
+      group: true;
+    }
+
+    .product-card:first-child {
+      grid-row: span 2;
+    }
+
+    .product-image {
+      width: 100%;
+      aspect-ratio: 3/4;
+      background: var(--concrete);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      position: relative;
+      transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+
+    .product-card:first-child .product-image {
+      aspect-ratio: 3/5;
+    }
+
+    .product-card:hover .product-image {
+      transform: scale(1.04);
+    }
+
+    /* CSS clothing mockups */
+    .product-art {
+      position: relative;
+      width: 100%;
+      height: 100%;
+    }
+
+    .product-art-1 {
+      background: linear-gradient(160deg, #1a1a1a 0%, #0d0d0d 100%);
+    }
+    .product-art-1::after {
+      content: 'GG';
+      position: absolute;
+      bottom: 20%;
+      left: 50%;
+      transform: translateX(-50%);
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 72px;
+      color: var(--red);
+      letter-spacing: 0.1em;
+    }
+    .product-art-1::before {
+      content: '';
+      position: absolute;
+      top: 20%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 60%;
+      height: 2px;
+      background: var(--red);
+      box-shadow: 0 12px 0 var(--blood), 0 24px 0 rgba(139,26,26,0.3);
+    }
+
+    .product-art-2 {
+      background: linear-gradient(200deg, #1e1e1e 0%, #111 100%);
+    }
+    .product-art-2::after {
+      content: '';
+      position: absolute;
+      inset: 25%;
+      border: 1px solid rgba(192,57,43,0.4);
+      transform: rotate(45deg);
+    }
+    .product-art-2::before {
+      content: 'GUTTER';
+      position: absolute;
+      bottom: 25%;
+      left: 0; right: 0;
+      text-align: center;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 32px;
+      letter-spacing: 0.3em;
+      color: rgba(255,255,255,0.15);
+    }
+
+    .product-art-3 {
+      background: #161616;
+    }
+    .product-art-3::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 50%;
+      background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 8px,
+        rgba(192,57,43,0.06) 8px,
+        rgba(192,57,43,0.06) 9px
+      );
+    }
+    .product-art-3::after {
+      content: '001';
+      position: absolute;
+      top: 15%;
+      right: 12%;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 60px;
+      color: rgba(255,255,255,0.06);
+    }
+
+    .product-art-4 {
+      background: linear-gradient(315deg, #1a1a1a, #0d0d0d);
+    }
+    .product-art-4::after {
+      content: '★';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 64px;
+      color: rgba(192,57,43,0.25);
+    }
+    .product-art-4::before {
+      content: 'CONCRETE DREAMS';
+      position: absolute;
+      bottom: 20%;
+      left: 0; right: 0;
+      text-align: center;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 16px;
+      letter-spacing: 0.4em;
+      color: rgba(255,255,255,0.2);
+    }
+
+    .product-art-5 {
+      background: #111;
+    }
+    .product-art-5::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 30% 40%, rgba(192,57,43,0.1), transparent 60%);
+    }
+    .product-art-5::after {
+      content: 'GUTTER\AGOLD';
+      white-space: pre;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 36px;
+      letter-spacing: 0.15em;
+      color: rgba(255,255,255,0.12);
+      text-align: center;
+      line-height: 1;
+    }
+
+    .product-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(10,10,10,0.9) 0%, transparent 50%);
+      opacity: 0;
+      transition: opacity 0.4s;
+      display: flex;
+      align-items: flex-end;
+      padding: 24px;
+    }
+
+    .product-card:hover .product-overlay { opacity: 1; }
+
+    .product-quick-add {
+      width: 100%;
+      background: var(--red);
+      color: var(--white);
+      font-family: 'Space Mono', monospace;
+      font-size: 9px;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      padding: 12px;
+      text-align: center;
+      border: none;
+      cursor: crosshair;
+      transform: translateY(10px);
+      transition: transform 0.3s;
+    }
+
+    .product-card:hover .product-quick-add {
+      transform: translateY(0);
+    }
+
+    .product-info {
+      padding: 16px 0 8px;
+    }
+
+    .product-name {
+      font-family: 'Space Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      color: var(--bone);
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+
+    .product-price {
+      font-size: 11px;
+      color: var(--fog);
+      letter-spacing: 0.05em;
+    }
+
+    .product-tag {
+      display: inline-block;
+      font-size: 8px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      padding: 3px 8px;
+      background: var(--red);
+      color: var(--white);
+      margin-bottom: 8px;
+    }
+
+    /* ABOUT / MANIFESTO */
+    .manifesto {
+      padding: 120px 40px;
+      background: var(--off-black);
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .manifesto::before {
+      content: 'GG';
+      position: absolute;
+      right: -40px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 400px;
+      color: transparent;
+      -webkit-text-stroke: 1px rgba(255,255,255,0.025);
+      line-height: 1;
+      pointer-events: none;
+    }
+
+    .manifesto-left {
+      position: relative;
+    }
+
+    .manifesto-visual {
+      width: 100%;
+      aspect-ratio: 4/5;
+      background: var(--concrete);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .manifesto-visual::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: 
+        repeating-linear-gradient(
+          90deg,
+          transparent,
+          transparent 60px,
+          rgba(192,57,43,0.04) 60px,
+          rgba(192,57,43,0.04) 61px
+        ),
+        repeating-linear-gradient(
+          0deg,
+          transparent,
+          transparent 60px,
+          rgba(192,57,43,0.04) 60px,
+          rgba(192,57,43,0.04) 61px
+        );
+    }
+
+    .manifesto-visual::after {
+      content: 'BORN IN\A THE\A CONCRETE';
+      white-space: pre;
+      position: absolute;
+      bottom: 40px;
+      left: 40px;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 56px;
+      line-height: 0.9;
+      color: var(--white);
+      letter-spacing: -0.02em;
+    }
+
+    .manifesto-accent-line {
+      position: absolute;
+      top: -20px;
+      left: -20px;
+      width: 80px;
+      height: 80px;
+      border-top: 2px solid var(--red);
+      border-left: 2px solid var(--red);
+    }
+
+    .manifesto-right {
+      position: relative;
+      z-index: 1;
+    }
+
+    .manifesto-quote {
+      font-family: 'DM Serif Display', serif;
+      font-style: italic;
+      font-size: clamp(28px, 3vw, 44px);
+      line-height: 1.2;
+      color: var(--white);
+      margin-bottom: 32px;
+    }
+
+    .manifesto-quote em {
+      color: var(--red);
+      font-style: normal;
+    }
+
+    .manifesto-body {
+      font-size: 12px;
+      line-height: 1.9;
+      color: var(--fog);
+      margin-bottom: 48px;
+      max-width: 440px;
+    }
+
+    .manifesto-stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 32px;
+      border-top: 1px solid var(--ash);
+      padding-top: 40px;
+    }
+
+    .stat-number {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 48px;
+      color: var(--white);
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+    .stat-label {
+      font-size: 9px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--smoke);
+    }
+
+    /* LOOKBOOK STRIP */
+    .lookbook {
+      padding: 0 40px 120px;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    .lookbook-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 2fr;
+      gap: 2px;
+      height: 480px;
+    }
+
+    .look-cell {
+      background: var(--concrete);
+      position: relative;
+      overflow: hidden;
+      cursor: crosshair;
+    }
+
+    .look-cell::before {
+      content: attr(data-label);
+      position: absolute;
+      bottom: 16px;
+      left: 16px;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 13px;
+      letter-spacing: 0.2em;
+      color: rgba(255,255,255,0.3);
+      z-index: 2;
+      transition: color 0.3s;
+    }
+    .look-cell:hover::before { color: var(--white); }
+
+    .look-cell:nth-child(1) { background: linear-gradient(200deg, #1a1a1a, #0d0d0d); }
+    .look-cell:nth-child(2) { background: linear-gradient(160deg, #161616, #111); }
+    .look-cell:nth-child(3) { background: linear-gradient(220deg, #1e1e1e, #0a0a0a); }
+    .look-cell:nth-child(4) { background: linear-gradient(180deg, #181818, #0d0d0d); }
+
+    .look-cell::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: rgba(192,57,43,0);
+      transition: background 0.4s;
+    }
+    .look-cell:hover::after {
+      background: rgba(192,57,43,0.06);
+    }
+
+    .look-cell-inner {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .look-cell:nth-child(1) .look-cell-inner::before {
+      content: 'SS\A26';
+      white-space: pre;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 100px;
+      color: rgba(255,255,255,0.06);
+      text-align: center;
+      line-height: 0.9;
+    }
+    .look-cell:nth-child(2) .look-cell-inner::before {
+      content: '';
+      display: block;
+      width: 60px;
+      height: 60px;
+      border: 1px solid rgba(192,57,43,0.2);
+      transform: rotate(45deg);
+    }
+    .look-cell:nth-child(3) .look-cell-inner::before {
+      content: '◆';
+      font-size: 48px;
+      color: rgba(192,57,43,0.15);
+    }
+    .look-cell:nth-child(4) .look-cell-inner::before {
+      content: 'LOOK\A BOOK';
+      white-space: pre;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 80px;
+      color: rgba(255,255,255,0.05);
+      text-align: center;
+      line-height: 0.9;
+    }
+
+    /* NEWSLETTER */
+    .newsletter {
+      background: var(--red);
+      padding: 100px 40px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .newsletter::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: repeating-linear-gradient(
+        45deg,
+        transparent,
+        transparent 40px,
+        rgba(0,0,0,0.04) 40px,
+        rgba(0,0,0,0.04) 41px
+      );
+    }
+
+    .newsletter-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(48px, 5vw, 72px);
+      line-height: 0.95;
+      color: var(--white);
+      position: relative;
+      z-index: 1;
+    }
+
+    .newsletter-sub {
+      font-size: 11px;
+      color: rgba(255,255,255,0.6);
+      margin-top: 16px;
+      letter-spacing: 0.05em;
+      line-height: 1.7;
+      position: relative;
+      z-index: 1;
+    }
+
+    .newsletter-form {
+      position: relative;
+      z-index: 1;
+    }
+
+    .newsletter-input-wrap {
+      display: flex;
+      gap: 0;
+      margin-top: 24px;
+    }
+
+    .newsletter-input {
+      flex: 1;
+      background: rgba(0,0,0,0.3);
+      border: 1px solid rgba(255,255,255,0.2);
+      border-right: none;
+      color: var(--white);
+      font-family: 'Space Mono', monospace;
+      font-size: 11px;
+      padding: 16px 20px;
+      outline: none;
+      letter-spacing: 0.05em;
+    }
+    .newsletter-input::placeholder { color: rgba(255,255,255,0.3); }
+
+    .newsletter-btn {
+      background: var(--black);
+      color: var(--white);
+      font-family: 'Space Mono', monospace;
+      font-size: 9px;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      padding: 16px 24px;
+      border: none;
+      cursor: crosshair;
+      transition: background 0.2s;
+      white-space: nowrap;
+    }
+    .newsletter-btn:hover { background: var(--off-black); }
+
+    .newsletter-disclaimer {
+      font-size: 9px;
+      color: rgba(255,255,255,0.3);
+      margin-top: 12px;
+      letter-spacing: 0.05em;
+    }
+
+    /* FOOTER */
+    footer {
+      background: var(--off-black);
+      padding: 80px 40px 40px;
+      border-top: 1px solid var(--ash);
+    }
+
+    .footer-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: 60px;
+      margin-bottom: 60px;
+    }
+
+    .footer-brand .logo {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 32px;
+      letter-spacing: 0.1em;
+      color: var(--white);
+      text-decoration: none;
+      display: block;
+      margin-bottom: 16px;
+    }
+    .footer-brand .logo span { color: var(--red); }
+
+    .footer-brand p {
+      font-size: 10px;
+      line-height: 1.8;
+      color: var(--fog);
+      max-width: 260px;
+    }
+
+    .footer-col h4 {
+      font-family: 'Space Mono', monospace;
+      font-size: 9px;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--white);
+      margin-bottom: 20px;
+    }
+
+    .footer-col ul {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .footer-col ul a {
+      font-size: 10px;
+      color: var(--fog);
+      text-decoration: none;
+      letter-spacing: 0.05em;
+      transition: color 0.2s;
+    }
+    .footer-col ul a:hover { color: var(--white); }
+
+    .footer-bottom {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 32px;
+      border-top: 1px solid var(--ash);
+      font-size: 9px;
+      color: var(--smoke);
+      letter-spacing: 0.1em;
+    }
+
+    .footer-social {
+      display: flex;
+      gap: 24px;
+    }
+    .footer-social a {
+      font-size: 9px;
+      color: var(--smoke);
+      text-decoration: none;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      transition: color 0.2s;
+    }
+    .footer-social a:hover { color: var(--red); }
+
+    /* ANIMATIONS */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(40px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .hero-tag { animation: fadeUp 0.6s ease 0.2s both; }
+    .hero-title { animation: fadeUp 0.7s ease 0.4s both; }
+    .hero-subtitle { animation: fadeUp 0.7s ease 0.6s both; }
+    .hero-ctas { animation: fadeUp 0.7s ease 0.8s both; }
+
+    /* RESPONSIVE */
+    @media (max-width: 900px) {
+      .hero { grid-template-columns: 1fr; }
+      .hero-right { display: none; }
+      .hero-left { padding: 120px 24px 80px; }
+
+      .product-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+      .product-card:first-child { grid-row: span 1; }
+
+      .manifesto {
+        grid-template-columns: 1fr;
+        padding: 80px 24px;
+      }
+      .manifesto-left { display: none; }
+
+      .lookbook-grid {
+        grid-template-columns: 1fr 1fr;
+        height: auto;
+      }
+      .look-cell { height: 200px; }
+
+      .newsletter {
+        grid-template-columns: 1fr;
+        padding: 80px 24px;
+        gap: 40px;
+      }
+
+      .footer-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 40px;
+      }
+
+      nav { padding: 16px 24px; }
+      .nav-links { display: none; }
+      .drop, .lookbook { padding: 80px 24px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <a href="#" class="nav-logo">GUTTER<span>GOLD</span></a>
+    <ul class="nav-links">
+      <li><a href="#">Shop</a></li>
+      <li><a href="#">Lookbook</a></li>
+      <li><a href="#">About</a></li>
+      <li><a href="#">Stockists</a></li>
+    </ul>
+    <a href="#" class="nav-cart">Bag (0)</a>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-left">
+      <div class="hero-tag">Spring / Summer 2026</div>
+      <h1 class="hero-title">
+        <div>GUTTER</div>
+        <div class="line-2">GOLD</div>
+      </h1>
+      <p class="hero-subtitle">Streetwear forged from the bottom. Every thread carries the weight of where we came from.</p>
+      <div class="hero-ctas">
+        <a href="#" class="btn-primary">Shop the Drop</a>
+        <a href="#" class="btn-ghost">View Lookbook →</a>
+      </div>
+    </div>
+    <div class="hero-right">
+      <div class="hero-image-block">
+        <div class="hero-figure">
+          <div class="hero-figure-shape"></div>
+          <div class="hero-figure-accent"></div>
+          <div class="hero-figure-cross">✖</div>
+          <div class="hero-number">26</div>
+        </div>
+      </div>
+    </div>
+    <div class="hero-scroll">Scroll Down</div>
+  </section>
+
+  <!-- MARQUEE -->
+  <div class="marquee-wrapper">
+    <div class="marquee-track">
+      <div class="marquee-item">GUTTERGOLD</div>
+      <div class="marquee-item">BORN IN THE CONCRETE</div>
+      <div class="marquee-item">SS26 DROP NOW LIVE</div>
+      <div class="marquee-item">WEAR YOUR TRUTH</div>
+      <div class="marquee-item">NO SIGNAL — NO NOISE</div>
+      <div class="marquee-item">GUTTERGOLD</div>
+      <div class="marquee-item">BORN IN THE CONCRETE</div>
+      <div class="marquee-item">SS26 DROP NOW LIVE</div>
+      <div class="marquee-item">WEAR YOUR TRUTH</div>
+      <div class="marquee-item">NO SIGNAL — NO NOISE</div>
+    </div>
+  </div>
+
+  <!-- DROP -->
+  <section class="drop">
+    <div class="section-header">
+      <div>
+        <div class="section-label">Latest Drop</div>
+        <h2 class="section-title">SS26<br>COLLECTION</h2>
+      </div>
+      <a href="#" class="section-link">View All →</a>
+    </div>
+
+    <div class="product-grid">
+      <div class="product-card">
+        <div class="product-image">
+          <div class="product-art product-art-1"></div>
+          <div class="product-overlay">
+            <button class="product-quick-add">Quick Add</button>
+          </div>
+        </div>
+        <div class="product-info">
+          <div class="product-tag">New Drop</div>
+          <div class="product-name">Gutter Arch Tee — Black</div>
+          <div class="product-price">₦ 32,000</div>
+        </div>
+      </div>
+
+      <div class="product-card">
+        <div class="product-image">
+          <div class="product-art product-art-2"></div>
+          <div class="product-overlay">
+            <button class="product-quick-add">Quick Add</button>
+          </div>
+        </div>
+        <div class="product-info">
+          <div class="product-name">Diamond Hoodie — Ash</div>
+          <div class="product-price">₦ 65,000</div>
+        </div>
+      </div>
+
+      <div class="product-card">
+        <div class="product-image">
+          <div class="product-art product-art-3"></div>
+          <div class="product-overlay">
+            <button class="product-quick-add">Quick Add</button>
+          </div>
+        </div>
+        <div class="product-info">
+          <div class="product-tag">Sold Out</div>
+          <div class="product-name">Grid Cargo Pant</div>
+          <div class="product-price">₦ 78,000</div>
+        </div>
+      </div>
+
+      <div class="product-card">
+        <div class="product-image">
+          <div class="product-art product-art-4"></div>
+          <div class="product-overlay">
+            <button class="product-quick-add">Quick Add</button>
+          </div>
+        </div>
+        <div class="product-info">
+          <div class="product-name">Concrete Star Crewneck</div>
+          <div class="product-price">₦ 55,000</div>
+        </div>
+      </div>
+
+      <div class="product-card">
+        <div class="product-image">
+          <div class="product-art product-art-5"></div>
+          <div class="product-overlay">
+            <button class="product-quick-add">Quick Add</button>
+          </div>
+        </div>
+        <div class="product-info">
+          <div class="product-tag">Low Stock</div>
+          <div class="product-name">GG Coach Jacket</div>
+          <div class="product-price">₦ 115,000</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MANIFESTO -->
+  <section class="manifesto">
+    <div class="manifesto-left">
+      <div class="manifesto-accent-line"></div>
+      <div class="manifesto-visual"></div>
+    </div>
+    <div class="manifesto-right">
+      <div class="section-label">Who We Are</div>
+      <h2 class="manifesto-quote">
+        Risen from the cracks in the <em>pavement.</em> Built from what was left behind.
+      </h2>
+      <p class="manifesto-body">
+        GUTTERGOLD is not a brand. It's a record. A document of streets that shaped us, sounds that moved us, and the quiet defiance of those who had nothing — and made everything.<br><br>
+        Every piece is a statement. Every stitch carries intent. We don't dress for the feed. We dress for the concrete.
+      </p>
+      <a href="#" class="btn-primary">Our Story</a>
+
+      <div class="manifesto-stats">
+        <div>
+          <div class="stat-number">04</div>
+          <div class="stat-label">Years Running</div>
+        </div>
+        <div>
+          <div class="stat-number">12</div>
+          <div class="stat-label">Drops Released</div>
+        </div>
+        <div>
+          <div class="stat-number">01</div>
+          <div class="stat-label">City. Lagos.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- LOOKBOOK -->
+  <section class="lookbook">
+    <div class="section-header">
+      <div>
+        <div class="section-label">Visual Archive</div>
+        <h2 class="section-title">THE<br>LOOKBOOK</h2>
+      </div>
+      <a href="#" class="section-link">Full Gallery →</a>
+    </div>
+
+    <div class="lookbook-grid">
+      <div class="look-cell" data-label="LOOK 01 — STREET">
+        <div class="look-cell-inner"></div>
+      </div>
+      <div class="look-cell" data-label="LOOK 02">
+        <div class="look-cell-inner"></div>
+      </div>
+      <div class="look-cell" data-label="LOOK 03">
+        <div class="look-cell-inner"></div>
+      </div>
+      <div class="look-cell" data-label="LOOK 04 — NIGHT">
+        <div class="look-cell-inner"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- NEWSLETTER -->
+  <section class="newsletter">
+    <div>
+      <div class="section-label" style="color: rgba(255,255,255,0.5);">Stay Connected</div>
+      <h2 class="newsletter-title">DROP<br>ALERTS.<br>NOTHING<br>ELSE.</h2>
+      <p class="newsletter-sub">No noise. No ads. Just early access to every drop, every lookbook, every release — before the street hears about it.</p>
+    </div>
+    <div class="newsletter-form">
+      <div class="newsletter-input-wrap">
+        <input class="newsletter-input" type="email" placeholder="your@email.com" />
+        <button class="newsletter-btn">Get Access</button>
+      </div>
+      <div class="newsletter-disclaimer">No spam. Unsubscribe anytime. For real.</div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <a href="#" class="logo">GUTTER<span>GOLD</span></a>
+        <p>Born in Lagos. Built for the streets. A clothing brand for those who came from nothing and wear it as armour.</p>
+      </div>
+
+      <div class="footer-col">
+        <h4>Shop</h4>
+        <ul>
+          <li><a href="#">New Arrivals</a></li>
+          <li><a href="#">Tees & Tops</a></li>
+          <li><a href="#">Hoodies</a></li>
+          <li><a href="#">Bottoms</a></li>
+          <li><a href="#">Accessories</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4>Info</h4>
+        <ul>
+          <li><a href="#">About</a></li>
+          <li><a href="#">Lookbook</a></li>
+          <li><a href="#">Stockists</a></li>
+          <li><a href="#">Sizing Guide</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4>Help</h4>
+        <ul>
+          <li><a href="#">Shipping</a></li>
+          <li><a href="#">Returns</a></li>
+          <li><a href="#">FAQ</a></li>
+          <li><a href="#">Contact</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <div>© 2026 GUTTERGOLD. All rights reserved.</div>
+      <div class="footer-social">
+        <a href="#">Instagram</a>
+        <a href="#">Twitter / X</a>
+        <a href="#">TikTok</a>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>
